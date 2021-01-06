@@ -1,7 +1,3 @@
-#ifndef CAN_INTERFACE__CAN_INTERFACE_HPP_
-#define CAN_INTERFACE__CAN_INTERFACE_HPP_
-
-#include <string>
 #include <unistd.h>
 #include <string.h>
 
@@ -13,11 +9,10 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 
-
 namespace can_interface
 {
 
-   /**
+  /**
    * @class CanInterface
    * @brief Class provides methods for an application to interface with the devices via CAN bus.
    */
@@ -79,7 +74,7 @@ namespace can_interface
        * @param id ID of the device to extract the RPM from. The RPM is located in the data[5] and data[4]
        * @return The RPM value for the chosen motor
        */ 
-      int extractRPM(unsigned short int id);
+      int extractRPM(short int id);
 
       // convert throttle to a range used by CAN bus (0~65535)
       int throttleToRange(double throttle);
@@ -92,7 +87,5 @@ namespace can_interface
       //frames to store can bus messages
       struct can_frame leftCommand_, rightCommand_;
   };
-  
-}  // namespace can_interface
+};
 
-#endif  // CAN_INTERFACE__CAN_INTERFACE_HPP_

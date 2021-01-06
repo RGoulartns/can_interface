@@ -1,8 +1,7 @@
-#include "can_interface/can_interface.hpp"
+#include <can_interface/can_interface.h>
 
 namespace can_interface
 {
-
   CanInterface::CanInterface(){}
 
   CanInterface::~CanInterface(){}
@@ -12,7 +11,7 @@ namespace can_interface
   {
     if((sckt_ = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
     {
-      perror("Error while opening socket");
+      //perror("Error while opening socket");
       return false;
     }
 
@@ -24,7 +23,7 @@ namespace can_interface
 
     if(bind(sckt_, (struct sockaddr *)&addr_, sizeof(addr_)) < 0)
     {
-      perror("Error in socket bind");
+      //perror("Error in socket bind");
       return false;
     }
     
@@ -105,7 +104,7 @@ namespace can_interface
     }
   }
 
-  int CanInterface::extractRPM(unsigned short int id)
+  int CanInterface::extractRPM(short int id)
   {
     short int readTimeout = 0;
     int rpm = 0;
@@ -132,7 +131,7 @@ namespace can_interface
 
     //setup socket
     if(!setupSocket())
-      return 1;
+      return false;
 
     //send commands and read response if required
     write(sckt_, &leftCommand_, sizeof(struct can_frame));
@@ -140,7 +139,7 @@ namespace can_interface
     write(sckt_, &rightCommand_, sizeof(struct can_frame));
 
     close(sckt_);
-    return 0;
+    return true;
   }
 
 
@@ -150,8 +149,8 @@ namespace can_interface
     createCanFrame(commandArgs);
 
     //setup socket
-    if(!setupSocket())
-      return 1;
+    if(setupSocket() < 0)
+      return false;
 
     //send commands and read response if required
     write(sckt_, &leftCommand_, sizeof(struct can_frame));
@@ -162,13 +161,11 @@ namespace can_interface
     rrpm = extractRPM(0x1A7);
 
     close(sckt_);
-    return 0;
+    return true;
   }
 
   int CanInterface::throttleToRange(double throttle)
   {
     return 32767 * throttle + 65535*(throttle<0);
   }
-  
-}  // namespace can_interface
-
+};
